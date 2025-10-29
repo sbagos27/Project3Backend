@@ -10,12 +10,10 @@ public class ChatMessage {
     private String content;
     private String sender;
     private String recipient;
-    // You can add timestamps, messageType, etc.
+
     public ChatMessage() {
     }
-    // ---------------------------------------------
 
-    // (It's also good to have one with all args)
     public ChatMessage(String content, String sender, String recipient) {
         this.content = content;
         this.sender = sender;
