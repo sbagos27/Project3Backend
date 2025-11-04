@@ -27,6 +27,7 @@ public class ChatController {
     // This method handles all messages sent from clients to the "/app/chat.sendMessage" destination.
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
+
         logger.info("Incoming STOMP message, sessionId={}, payload={}",
             headerAccessor != null ? headerAccessor.getSessionId() : "-", chatMessage);
 
@@ -43,22 +44,23 @@ public class ChatController {
         // TODO: Save the chatMessage to your Supabase Postgres database
 
         // --- Routing Logic ---
+        // Send the message to the specific recipient's private queue.
+        // Spring automatically maps this to "/user/{username}/queue/private"
         try {
-            // Send to recipient's queue
-            String destination = "/queue/private";
             messagingTemplate.convertAndSendToUser(
-                chatMessage.getRecipient(),
-                destination,
-                chatMessage
+                chatMessage.getRecipient(), // The recipient's username
+                "/queue/private",           // The private destination
+                chatMessage                 // The message payload
             );
-            
-            logger.info("Message routed - From: {}, To: {}, Content: {}", 
-                       chatMessage.getSender(), 
-                       chatMessage.getRecipient(), 
-                       chatMessage.getContent());
+            logger.info("Routed message from {} to {}", chatMessage.getSender(), chatMessage.getRecipient());
         } catch (Exception ex) {
-            logger.error("Failed to route chat message: {}", ex.getMessage());
-            ex.printStackTrace();
+            logger.error("Failed to route chat message {}", chatMessage, ex);
         }
     }
+
+    // TODO: You can add other mappings, e.g., for "user is typing" notifications
+    // @MessageMapping("/chat.userTyping")
+    // public void userTyping(@Payload TypingNotification notification) {
+    //    messagingTemplate.convertAndSendToUser(notification.getRecipient(), "/queue/typing", notification);
+    // }
 }
