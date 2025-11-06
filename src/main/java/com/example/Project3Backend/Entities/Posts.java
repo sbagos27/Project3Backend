@@ -1,22 +1,32 @@
 package com.example.Project3Backend.Entities;
-// not to confuse with api POST but like social media post yk?
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Posts {
 
-    private int post_id;
-    private String post_title;
-    private String post_content; //would probably be a description and a video/picture
+    private int post_id; // ID for posts for database
+    private String post_title; // maybe wont use this idk
+    private String description; // caption text under the image
+    private String postImage; // path or URL to image
     private String post_date;
     private String post_author;
+    private int likes;
+    private List<String> comments;
 
     public Posts() {
-
+        this.comments = new ArrayList<>();
+        this.likes = 0;
     }
 
-    public Posts(String post_title, String post_content, String post_date, String post_author) {
+    public Posts(String post_title, String description, String postImage, String post_date, String post_author) {
         this.post_title = post_title;
-        this.post_content = post_content;
-        this.post_date = post_date;
+        this.description = description;
+        this.postImage = postImage;
+        this.post_date = post_date; // will add time.java or whatever that extension is
         this.post_author = post_author;
+        this.comments = new ArrayList<>();
+        this.likes = 0;
     }
 
     public int getPost_id() {
@@ -35,12 +45,20 @@ public class Posts {
         this.post_title = post_title;
     }
 
-    public String getPost_content() {
-        return post_content;
+    public String getDescription() {
+        return description;
     }
 
-    public void setPost_content(String post_content) {
-        this.post_content = post_content;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getPostImage() {
+        return postImage;
+    }
+
+    public void setPostImage(String postImage) {
+        this.postImage = postImage;
     }
 
     public String getPost_date() {
@@ -59,5 +77,28 @@ public class Posts {
         this.post_author = post_author;
     }
 
+    public int getLikes() {
+        return likes;
+    }
 
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    public List<String> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<String> comments) {
+        this.comments = comments;
+    }
+
+    // convenience methods
+    public void addComment(String comment) {
+        this.comments.add(comment);
+    }
+
+    public void like() {
+        this.likes++;
+    }
 }
