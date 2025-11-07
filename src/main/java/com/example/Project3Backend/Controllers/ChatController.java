@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping; 
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController 
+@Controller 
 public class ChatController {
 
     @Autowired
@@ -26,6 +26,12 @@ public class ChatController {
         System.out.println("--- MESSAGE RECEIVED ---");
         System.out.println("Sender: " + chatMessage.getSender());
         System.out.println("Recipient: " + chatMessage.getRecipient());
+
+        try {
+            messageRepository.save(chatMessage);
+        } catch (Exception e) {
+            System.err.println("Failed to save message: " + e.getMessage());
+        }
 
         messagingTemplate.convertAndSendToUser(
             chatMessage.getRecipient(),

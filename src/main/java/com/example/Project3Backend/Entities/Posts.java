@@ -1,104 +1,94 @@
 package com.example.Project3Backend.Entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
+@Entity 
+@Table(name = "posts") 
 public class Posts {
 
-    private int post_id; // ID for posts for database
-    private String post_title; // maybe wont use this idk
-    private String description; // caption text under the image
-    private String postImage; // path or URL to image
-    private String post_date;
-    private String post_author;
-    private int likes;
-    private List<String> comments;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id; 
+
+    @Column(name = "created_at") 
+    private LocalDateTime createdAt; 
+
+    @Column(name = "caption")
+    private String caption;
+
+    @Column(name = "author_id")
+    private Long authorId;
+
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(name = "likes_count")
+    private Long likesCount;
+
+    @Column(name = "comment_count") 
+    private Long commentCount;
+
+    // --- Constructors ---
 
     public Posts() {
-        this.comments = new ArrayList<>();
-        this.likes = 0;
     }
 
-    public Posts(String post_title, String description, String postImage, String post_date, String post_author) {
-        this.post_title = post_title;
-        this.description = description;
-        this.postImage = postImage;
-        this.post_date = post_date; // will add time.java or whatever that extension is
-        this.post_author = post_author;
-        this.comments = new ArrayList<>();
-        this.likes = 0;
+    // --- Getters and Setters ---
+
+    public Long getId() {
+        return id;
     }
 
-    public int getPost_id() {
-        return post_id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setPost_id(int post_id) {
-        this.post_id = post_id;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public String getPost_title() {
-        return post_title;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public void setPost_title(String post_title) {
-        this.post_title = post_title;
+    public String getCaption() {
+        return caption;
     }
 
-    public String getDescription() {
-        return description;
+    public void setCaption(String caption) {
+        this.caption = caption;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public Long getAuthorId() {
+        return authorId;
     }
 
-    public String getPostImage() {
-        return postImage;
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
     }
 
-    public void setPostImage(String postImage) {
-        this.postImage = postImage;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public String getPost_date() {
-        return post_date;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public void setPost_date(String post_date) {
-        this.post_date = post_date;
+    public Long getLikesCount() {
+        return likesCount;
     }
 
-    public String getPost_author() {
-        return post_author;
+    public void setLikesCount(Long likesCount) {
+        this.likesCount = likesCount;
     }
 
-    public void setPost_author(String post_author) {
-        this.post_author = post_author;
+    public Long getCommentCount() {
+        return commentCount;
     }
 
-    public int getLikes() {
-        return likes;
-    }
-
-    public void setLikes(int likes) {
-        this.likes = likes;
-    }
-
-    public List<String> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<String> comments) {
-        this.comments = comments;
-    }
-
-    // convenience methods
-    public void addComment(String comment) {
-        this.comments.add(comment);
-    }
-
-    public void like() {
-        this.likes++;
+    public void setCommentCount(Long commentCount) {
+        this.commentCount = commentCount;
     }
 }

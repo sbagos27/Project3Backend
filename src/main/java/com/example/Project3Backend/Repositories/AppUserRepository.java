@@ -1,4 +1,4 @@
-package com.example.Project3Backend.repositories;
+package com.example.Project3Backend.Repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
