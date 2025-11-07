@@ -41,6 +41,7 @@ public class ChatController {
     }
 
     @GetMapping("/db-check")
+    @ResponseBody
     public String checkDatabase() {
         try {
             long count = messageRepository.count();
@@ -48,10 +49,5 @@ public class ChatController {
         } catch (Exception e) {
             return "ERROR: Database connection failed. " + e.getMessage();
         }
-    }
-
-    @GetMapping("/")
-    public String home() {
-        return "Spring Boot server is running!";
     }
 }
