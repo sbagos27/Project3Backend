@@ -3,7 +3,7 @@ package com.example.Project3Backend.Controllers;
 import com.example.Project3Backend.Entities.ChatMessage;
 import com.example.Project3Backend.Repositories.MessageRepository;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -30,7 +30,7 @@ public class ChatController {
         System.out.println("Sender: " + chatMessage.getSender());
         System.out.println("Recipient: " + chatMessage.getRecipient());
         
-        chatMessage.setCreatedAt(LocalDateTime.now());
+        chatMessage.setCreatedAt(OffsetDateTime.now());
 
         try {
             messageRepository.save(chatMessage);
