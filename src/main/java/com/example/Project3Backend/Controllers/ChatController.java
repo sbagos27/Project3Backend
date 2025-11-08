@@ -3,6 +3,8 @@ package com.example.Project3Backend.Controllers;
 import com.example.Project3Backend.Entities.ChatMessage;
 import com.example.Project3Backend.Repositories.MessageRepository;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -27,6 +29,8 @@ public class ChatController {
         System.out.println("--- MESSAGE RECEIVED ---");
         System.out.println("Sender: " + chatMessage.getSender());
         System.out.println("Recipient: " + chatMessage.getRecipient());
+        
+        chatMessage.setCreatedAt(LocalDateTime.now());
 
         try {
             messageRepository.save(chatMessage);
