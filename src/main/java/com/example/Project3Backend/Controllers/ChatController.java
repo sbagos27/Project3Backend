@@ -3,15 +3,18 @@ package com.example.Project3Backend.Controllers;
 import com.example.Project3Backend.Entities.ChatMessage;
 import com.example.Project3Backend.Repositories.MessageRepository;
 
+import java.time.OffsetDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping; 
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController 
+@Controller 
 public class ChatController {
 
     @Autowired
@@ -26,6 +29,14 @@ public class ChatController {
         System.out.println("--- MESSAGE RECEIVED ---");
         System.out.println("Sender: " + chatMessage.getSender());
         System.out.println("Recipient: " + chatMessage.getRecipient());
+        
+        chatMessage.setCreatedAt(OffsetDateTime.now());
+
+        try {
+            messageRepository.save(chatMessage);
+        } catch (Exception e) {
+            System.err.println("Failed to save message: " + e.getMessage());
+        }
 
         messagingTemplate.convertAndSendToUser(
             chatMessage.getRecipient(),
@@ -35,6 +46,7 @@ public class ChatController {
     }
 
     @GetMapping("/db-check")
+    @ResponseBody
     public String checkDatabase() {
         try {
             long count = messageRepository.count();
@@ -42,10 +54,5 @@ public class ChatController {
         } catch (Exception e) {
             return "ERROR: Database connection failed. " + e.getMessage();
         }
-    }
-
-    @GetMapping("/")
-    public String home() {
-        return "Spring Boot server is running!";
     }
 }

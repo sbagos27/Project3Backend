@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = "com.example.Project3Backend.repositories")
+@EnableJpaRepositories(basePackages = "com.example.Project3Backend.Repositories")
 @EntityScan(basePackages = "com.example.Project3Backend.Entities")
 public class Application {
 

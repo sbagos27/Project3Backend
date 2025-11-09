@@ -3,7 +3,7 @@ package com.example.Project3Backend.Services;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.Project3Backend.Entities.AppUser;
-import com.example.Project3Backend.repositories.AppUserRepository;
+import com.example.Project3Backend.Repositories.AppUserRepository;
 import java.util.Optional;
 import java.util.List;
 
