@@ -38,11 +38,9 @@ public class ChatController {
             System.err.println("Failed to save message: " + e.getMessage());
         }
 
-        messagingTemplate.convertAndSendToUser(
-            chatMessage.getRecipient(),
-            "/queue/private",
-            chatMessage
-        );
+        String recipientDestination = "/queue/private-" + chatMessage.getRecipient();
+        messagingTemplate.convertAndSend(recipientDestination, chatMessage);
+        System.out.println("Message sent to destination: " + recipientDestination);
     }
 
     @GetMapping("/db-check")
