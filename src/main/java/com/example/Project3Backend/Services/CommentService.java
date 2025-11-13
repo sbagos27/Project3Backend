@@ -1,7 +1,7 @@
 package com.example.Project3Backend.Services;
 
 import com.example.Project3Backend.Entities.Comments;
-import com.example.Project3Backend.repositories.CommentRepository;
+import com.example.Project3Backend.Repositories.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package com.example.Project3Backend.Services;
 
 import com.example.Project3Backend.Entities.Likes;
-import com.example.Project3Backend.repositories.LikeRepository;
+import com.example.Project3Backend.Repositories.LikeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

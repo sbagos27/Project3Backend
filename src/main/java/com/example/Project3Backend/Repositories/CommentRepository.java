@@ -1,7 +1,7 @@
-package com.example.Project3Backend.repositories;
+package com.example.Project3Backend.Repositories;
 
-import com.example.Project3Backend.Entities.Comments;
 import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.Project3Backend.Entities.Comments;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.Project3Backend.repositories;
+package com.example.Project3Backend.Repositories;
 
 import com.example.Project3Backend.Entities.Likes;
 import org.springframework.data.jpa.repository.JpaRepository;
