@@ -12,13 +12,8 @@ public class AppUser {
 
     private String username;
 
-    @Column(nullable = true)
-    private String password;
-
-    @Column(nullable = true)
     private String provider;
 
-    @Column(nullable = true)
     private String providerId;
 
     public Long getId() {
@@ -43,14 +38,6 @@ public class AppUser {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getProvider() {
