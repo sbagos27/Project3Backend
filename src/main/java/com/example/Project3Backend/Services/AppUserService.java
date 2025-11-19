@@ -1,5 +1,6 @@
 package com.example.Project3Backend.Services;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -127,11 +128,11 @@ public class AppUserService {
     }
 
     public Long getUserIdFromToken(String token) {
-        var claims = Jwts.parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        Claims claims = Jwts.parser()
+            .setSigningKey(token)
+            .build()
+            .parseSignedClaims(token)
+            .getBody();
         
         Object userId = claims.get("userId");
         if (userId instanceof Number) {
