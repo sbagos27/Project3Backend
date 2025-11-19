@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -18,9 +19,11 @@ import java.util.List;
 public class SecurityConfig {
 
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final JwtRequestFilter jwtRequestFilter;
 
-    public SecurityConfig(OAuth2SuccessHandler oAuth2SuccessHandler) {
+    public SecurityConfig(OAuth2SuccessHandler oAuth2SuccessHandler, JwtRequestFilter jwtRequestFilter) {
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
+        this.jwtRequestFilter = jwtRequestFilter;
     }
 
     @Bean
@@ -36,11 +39,11 @@ public class SecurityConfig {
             )
             .oauth2Login(oauth2 -> oauth2
                 .successHandler(oAuth2SuccessHandler)
-                .defaultSuccessUrl("/api/users/me", true)
             )
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-            );
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -59,4 +62,3 @@ public class SecurityConfig {
         return source;
     }
 }
-

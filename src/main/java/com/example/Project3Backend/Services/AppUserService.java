@@ -129,9 +129,9 @@ public class AppUserService {
 
     public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parser()
-            .setSigningKey(token)
+            .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
             .build()
-            .parseSignedClaims(token)
+            .parseClaimsJws(token)
             .getBody();
         
         Object userId = claims.get("userId");
