@@ -17,9 +17,11 @@ import java.io.IOException;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final AppUserService userService;
+    private final JwtUtil jwtUtil;
 
-    public OAuth2SuccessHandler(AppUserService userService) {
+    public OAuth2SuccessHandler(AppUserService userService, JwtUtil jwtUtil) {
         this.userService = userService;
+        this.jwtUtil = jwtUtil;
         setDefaultTargetUrl("/api/users/me");
     }
 
@@ -69,13 +71,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // Create or update user in database
         AppUser user = userService.findOrCreateUserFromOAuth(provider, providerId, email, username);
         
-        // Store user ID in session or as a custom attribute
-        request.getSession().setAttribute("userId", user.getId());
-        request.getSession().setAttribute("username", user.getUsername());
+        // Generate JWT token
+        String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getEmail(), provider);
         
-        // Redirect to a frontend success page or return user info
-        // Use the parent class method to handle redirect
-        super.onAuthenticationSuccess(request, response, authentication);
+        // Redirect to frontend with JWT token as query parameter
+        String redirectUrl = "http://localhost:3000/auth/callback?token=" + token + "&userId=" + user.getId();
+        getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 }
 

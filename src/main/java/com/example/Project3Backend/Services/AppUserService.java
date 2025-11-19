@@ -1,5 +1,8 @@
 package com.example.Project3Backend.Services;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.Project3Backend.Entities.AppUser;
@@ -11,6 +14,9 @@ import java.util.List;
 public class AppUserService {
 
     private final AppUserRepository userRepo;
+    
+    @Value("${jwt.secret:default-secret-key-change-this-in-production}")
+    private String jwtSecret;
 
     public AppUserService(AppUserRepository userRepo) {
         this.userRepo = userRepo;
@@ -118,5 +124,19 @@ public class AppUserService {
 
     public Optional<AppUser> findById(Long userId) {
         return userRepo.findById(userId);
+    }
+
+    public Long getUserIdFromToken(String token) {
+        var claims = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        
+        Object userId = claims.get("userId");
+        if (userId instanceof Number) {
+            return ((Number) userId).longValue();
+        }
+        throw new IllegalArgumentException("Invalid userId in token");
     }
 }

@@ -24,9 +24,27 @@ public class AppUserController {
     @GetMapping("/me")
     public ResponseEntity<Map<String, Object>> getCurrentUser(
             @AuthenticationPrincipal OAuth2User oauth2User,
-            HttpSession session) {
-        // Try to get user from session first (set by OAuth2SuccessHandler)
-        Long userId = (Long) session.getAttribute("userId");
+            HttpSession session,
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        
+        Long userId = null;
+        
+        // Try to get user ID from JWT token in Authorization header
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            try {
+                // Parse JWT and extract userId
+                userId = userService.getUserIdFromToken(token);
+            } catch (Exception e) {
+                // Token validation failed, fall through
+            }
+        }
+        
+        // Fall back to session
+        if (userId == null) {
+            userId = (Long) session.getAttribute("userId");
+        }
+        
         if (userId != null) {
             Optional<AppUser> userOpt = userService.findById(userId);
             if (userOpt.isPresent()) {
@@ -39,27 +57,7 @@ public class AppUserController {
             }
         }
 
-        // If no user in session but OAuth2User is present, return OAuth2 info
-        if (oauth2User != null) {
-            String email = oauth2User.getAttribute("email");
-            String username = oauth2User.getAttribute("login") != null 
-                    ? oauth2User.getAttribute("login") 
-                    : oauth2User.getAttribute("name");
-            
-            if (email == null || email.isEmpty()) {
-                email = "unknown";
-            }
-            if (username == null || username.isEmpty()) {
-                username = email.split("@")[0];
-            }
-            
-            return ResponseEntity.ok(Map.of(
-                    "email", email,
-                    "username", username,
-                    "provider", "oauth2"));
-        }
-
-        // Not authenticated
+        // If no user found, return 401
         return ResponseEntity.status(401)
                 .body(Map.of("error", "Not authenticated"));
     }
