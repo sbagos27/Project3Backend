@@ -12,7 +12,9 @@ public class AppUser {
 
     private String username;
 
-    private String password;
+    private String provider;
+
+    private String providerId;
 
     public Long getId() {
         return id;
@@ -38,11 +40,19 @@ public class AppUser {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getProvider() {
+        return provider;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
     }
 }

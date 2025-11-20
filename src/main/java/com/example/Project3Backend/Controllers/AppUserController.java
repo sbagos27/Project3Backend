@@ -1,11 +1,15 @@
 package com.example.Project3Backend.Controllers;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import com.example.Project3Backend.Entities.AppUser;
 import com.example.Project3Backend.Services.AppUserService;
+import jakarta.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -17,43 +21,45 @@ public class AppUserController {
         this.userService = userService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> registerUser(@RequestBody Map<String, String> request) {
-        try {
-            String username = request.get("username");
-            String password = request.get("password");
-            String email = request.get("email");
-
-            AppUser newUser = userService.createUser(username, password, email);
-
-            return ResponseEntity.ok(Map.of(
-                    "message", "User created successfully",
-                    "userId", newUser.getId(),
-                    "username", newUser.getUsername()));
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", e.getMessage()));
+    @GetMapping("/me")
+    public ResponseEntity<Map<String, Object>> getCurrentUser(
+            @AuthenticationPrincipal OAuth2User oauth2User,
+            HttpSession session,
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        
+        Long userId = null;
+        
+        // Try to get user ID from JWT token in Authorization header
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            try {
+                // Parse JWT and extract userId
+                userId = userService.getUserIdFromToken(token);
+            } catch (Exception e) {
+                // Token validation failed, fall through
+            }
         }
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody Map<String, String> request) {
-        try {
-            String username = request.get("username");
-            String password = request.get("password");
-
-            AppUser user = userService.authenticateUser(username, password);
-
-            return ResponseEntity.ok(Map.of(
-                    "message", "Login successful",
-                    "userId", user.getId(),
-                    "username", user.getUsername()));
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", e.getMessage()));
+        
+        // Fall back to session
+        if (userId == null) {
+            userId = (Long) session.getAttribute("userId");
         }
+        
+        if (userId != null) {
+            Optional<AppUser> userOpt = userService.findById(userId);
+            if (userOpt.isPresent()) {
+                AppUser user = userOpt.get();
+                return ResponseEntity.ok(Map.of(
+                        "userId", user.getId(),
+                        "username", user.getUsername(),
+                        "email", user.getEmail() != null ? user.getEmail() : "unknown",
+                        "provider", user.getProvider() != null ? user.getProvider() : "unknown"));
+            }
+        }
+
+        // If no user found, return 401
+        return ResponseEntity.status(401)
+                .body(Map.of("error", "Not authenticated"));
     }
 
     @PutMapping("/{userId}/username")

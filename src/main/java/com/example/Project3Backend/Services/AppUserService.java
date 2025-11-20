@@ -1,5 +1,9 @@
 package com.example.Project3Backend.Services;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.Project3Backend.Entities.AppUser;
@@ -11,61 +15,82 @@ import java.util.List;
 public class AppUserService {
 
     private final AppUserRepository userRepo;
+    
+    @Value("${jwt.secret:default-secret-key-change-this-in-production}")
+    private String jwtSecret;
 
     public AppUserService(AppUserRepository userRepo) {
         this.userRepo = userRepo;
     }
 
     @Transactional
-    public AppUser createUser(String username, String password, String email) {
-        if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("Username cannot be empty");
+    public AppUser findOrCreateUserFromOAuth(String provider, String providerId, String email, String username) {
+        if (provider == null || provider.trim().isEmpty()) {
+            throw new IllegalArgumentException("Provider cannot be empty");
         }
-        if (password == null || password.trim().isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be empty");
+        if (providerId == null || providerId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Provider ID cannot be empty");
         }
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("Email cannot be empty");
         }
-
-        Optional<AppUser> existingUser = userRepo.findByUsernameIgnoreCase(username.trim());
-        if (existingUser.isPresent()) {
-            throw new IllegalArgumentException("Username already exists");
-        }
-
-        Optional<AppUser> existingEmail = userRepo.findByEmail(email.trim());
-        if (existingEmail.isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
-        }
-
-        AppUser newUser = new AppUser();
-        newUser.setUsername(username.trim());
-        newUser.setPassword(password.trim());
-        newUser.setEmail(email.trim());
-
-        return userRepo.save(newUser);
-    }
-
-    @Transactional
-    public AppUser authenticateUser(String username, String password) {
         if (username == null || username.trim().isEmpty()) {
             throw new IllegalArgumentException("Username cannot be empty");
         }
-        if (password == null || password.trim().isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be empty");
+
+        // First, try to find user by provider and providerId
+        Optional<AppUser> existingUser = userRepo.findByProviderAndProviderId(provider.trim(), providerId.trim());
+        if (existingUser.isPresent()) {
+            AppUser user = existingUser.get();
+            // Update email and username if they've changed
+            if (!user.getEmail().equals(email.trim())) {
+                user.setEmail(email.trim());
+            }
+            if (!user.getUsername().equals(username.trim())) {
+                // Check if new username is available
+                Optional<AppUser> usernameTaken = userRepo.findByUsernameIgnoreCase(username.trim());
+                if (usernameTaken.isEmpty() || usernameTaken.get().getId().equals(user.getId())) {
+                    user.setUsername(username.trim());
+                }
+            }
+            return userRepo.save(user);
         }
 
-        Optional<AppUser> user = userRepo.findByUsernameIgnoreCase(username.trim());
-        if (user.isEmpty()) {
-            throw new IllegalArgumentException("User not found");
+        // If not found by provider+providerId, try to find by email to link account
+        Optional<AppUser> existingEmail = userRepo.findByEmail(email.trim());
+        if (existingEmail.isPresent()) {
+            AppUser user = existingEmail.get();
+            // Link this OAuth provider to existing account
+            user.setProvider(provider.trim());
+            user.setProviderId(providerId.trim());
+            // Update username if available
+            Optional<AppUser> usernameTaken = userRepo.findByUsernameIgnoreCase(username.trim());
+            if (usernameTaken.isEmpty() || usernameTaken.get().getId().equals(user.getId())) {
+                user.setUsername(username.trim());
+            }
+            return userRepo.save(user);
         }
 
-        AppUser foundUser = user.get();
-        if (!foundUser.getPassword().equals(password.trim())) {
-            throw new IllegalArgumentException("Invalid password");
+        // Create new user
+        Optional<AppUser> existingUsername = userRepo.findByUsernameIgnoreCase(username.trim());
+        if (existingUsername.isPresent()) {
+            // If username is taken, append a number
+            int suffix = 1;
+            String baseUsername = username.trim();
+            while (userRepo.findByUsernameIgnoreCase(baseUsername + suffix).isPresent()) {
+                suffix++;
+            }
+            username = baseUsername + suffix;
         }
 
-        return foundUser;
+        AppUser newUser = new AppUser();
+        newUser.setProvider(provider.trim());
+        newUser.setProviderId(providerId.trim());
+        newUser.setEmail(email.trim());
+        newUser.setUsername(username.trim());
+        // Password remains null for OAuth users
+
+        return userRepo.save(newUser);
     }
 
     @Transactional
@@ -96,5 +121,23 @@ public class AppUserService {
 
     public List<AppUser> getAllUsers() {
         return userRepo.findAll();
+    }
+
+    public Optional<AppUser> findById(Long userId) {
+        return userRepo.findById(userId);
+    }
+
+    public Long getUserIdFromToken(String token) {
+        Claims claims = Jwts.parser()
+            .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+        
+        Object userId = claims.get("userId");
+        if (userId instanceof Number) {
+            return ((Number) userId).longValue();
+        }
+        throw new IllegalArgumentException("Invalid userId in token");
     }
 }
