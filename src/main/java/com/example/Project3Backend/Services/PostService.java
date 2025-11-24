@@ -4,6 +4,8 @@ import com.example.Project3Backend.Entities.Posts;
 import com.example.Project3Backend.Repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -42,7 +44,7 @@ public class PostService {
     // READ ONE
     public Posts getPostById(long id) {
         return postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post Not Found"));
     }
 
     // UPDATE

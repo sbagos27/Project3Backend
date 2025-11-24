@@ -21,6 +21,7 @@ public class LikeService {
     public Likes createLike(Likes like) {
         like.setCreatedAt(OffsetDateTime.now());
         Likes savedLike = likeRepository.save(like);
+        
         postService.incrementLikes(like.getPostId());
         return savedLike;
     }

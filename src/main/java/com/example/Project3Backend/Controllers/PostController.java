@@ -52,33 +52,21 @@ public class PostController {
     // READ one post by ID
     @GetMapping("/{id}")
     public ResponseEntity<Posts> getPostById(@PathVariable long id) {
-        try {
-            Posts post = postService.getPostById(id);
-            return ResponseEntity.ok(post);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Posts post = postService.getPostById(id);
+        return ResponseEntity.ok(post);
     }
 
     // UPDATE a post
     @PutMapping("/{id}")
     public ResponseEntity<Posts> updatePost(@PathVariable long id, @RequestBody Posts postDetails) {
-        try {
-            Posts updatedPost = postService.updatePost(id, postDetails);
-            return ResponseEntity.ok(updatedPost);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Posts updatedPost = postService.updatePost(id, postDetails);
+        return ResponseEntity.ok(updatedPost);
     }
 
     // DELETE a post
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable long id) {
-        try {
-            postService.deletePost(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        postService.deletePost(id);
+        return ResponseEntity.noContent().build();
     }
 }
