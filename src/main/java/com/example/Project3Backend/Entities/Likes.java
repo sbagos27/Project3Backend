@@ -1,15 +1,12 @@
 package com.example.Project3Backend.Entities;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
-@Table(
-        name = "likes",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"post_id", "user_id"})
-        }
-)
+@Table(name = "likes", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "post_id", "user_id" })
+})
 public class Likes {
 
     @Id
@@ -22,14 +19,14 @@ public class Likes {
     @Column(name = "user_id", nullable = false)
     private Long userId; // users.id (who liked)
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "created_at", columnDefinition = "TIMESTAMPTZ")
+    private OffsetDateTime createdAt;
 
     // Constructors
     public Likes() {
     }
 
-    public Likes(Long postId, Long userId, LocalDateTime createdAt) {
+    public Likes(Long postId, Long userId, OffsetDateTime createdAt) {
         this.postId = postId;
         this.userId = userId;
         this.createdAt = createdAt;
@@ -60,11 +57,11 @@ public class Likes {
         this.userId = userId;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 }

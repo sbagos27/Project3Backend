@@ -15,20 +15,20 @@ public class ChatMessage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 
+    private Long id;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMPTZ")
     private OffsetDateTime createdAt;
 
     // Maps the 'sender' field to the 'sender' column
-    @Column(name = "sender")
-    private String sender;
+    @Column(name = "sender_id")
+    private Long senderId;
 
     @Column(name = "content")
     private String content;
 
-    @Column(name = "recipient")
-    private String recipient; 
+    @Column(name = "recipient_id")
+    private Long recipientId;
 
     // --- Constructors ---
 
@@ -54,12 +54,12 @@ public class ChatMessage {
         this.createdAt = createdAt;
     }
 
-    public String getSender() {
-        return sender;
+    public Long getSenderId() {
+        return senderId;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
     }
 
     public String getContent() {
@@ -70,12 +70,11 @@ public class ChatMessage {
         this.content = content;
     }
 
-    public String getRecipient() {
-        return recipient;
+    public Long getRecipientId() {
+        return recipientId;
     }
 
-    public void setRecipient(String recipient) {
-        this.recipient = recipient;
+    public void setRecipientId(Long recipientId) {
+        this.recipientId = recipientId;
     }
 }
-

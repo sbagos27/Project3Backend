@@ -1,7 +1,7 @@
 package com.example.Project3Backend.Entities;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "comments")
@@ -20,14 +20,14 @@ public class Comments {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "created_at", columnDefinition = "TIMESTAMPTZ")
+    private OffsetDateTime createdAt;
 
     // Constructors
     public Comments() {
     }
 
-    public Comments(Long postId, Long userId, String content, LocalDateTime createdAt) {
+    public Comments(Long postId, Long userId, String content, OffsetDateTime createdAt) {
         this.postId = postId;
         this.userId = userId;
         this.content = content;
@@ -67,11 +67,11 @@ public class Comments {
         this.content = content;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 }
