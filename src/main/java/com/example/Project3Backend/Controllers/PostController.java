@@ -35,6 +35,20 @@ public class PostController {
         return ResponseEntity.ok(posts); // Returns "200 OK"
     }
 
+    // READ posts by User ID
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Posts>> getPostsByUserId(@PathVariable Long userId) {
+        List<Posts> posts = postService.getPostsByAuthorId(userId);
+        return ResponseEntity.ok(posts);
+    }
+
+    // READ posts by Cat ID
+    @GetMapping("/cat/{catId}")
+    public ResponseEntity<List<Posts>> getPostsByCatId(@PathVariable Long catId) {
+        List<Posts> posts = postService.getPostsByCatId(catId);
+        return ResponseEntity.ok(posts);
+    }
+
     // READ one post by ID
     @GetMapping("/{id}")
     public ResponseEntity<Posts> getPostById(@PathVariable long id) {
