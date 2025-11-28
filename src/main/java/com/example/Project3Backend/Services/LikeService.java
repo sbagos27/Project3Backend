@@ -5,7 +5,7 @@ import com.example.Project3Backend.Repositories.LikeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -14,10 +14,16 @@ public class LikeService {
     @Autowired
     private LikeRepository likeRepository;
 
+    @Autowired
+    private PostService postService;
+
     // CREATE (like a post)
     public Likes createLike(Likes like) {
-        like.setCreatedAt(LocalDateTime.now());
-        return likeRepository.save(like);
+        like.setCreatedAt(OffsetDateTime.now());
+        Likes savedLike = likeRepository.save(like);
+        
+        postService.incrementLikes(like.getPostId());
+        return savedLike;
     }
 
     // READ ALL
@@ -40,5 +46,6 @@ public class LikeService {
     public void deleteLike(Long id) {
         Likes like = getLikeById(id);
         likeRepository.delete(like);
+        postService.decrementLikes(like.getPostId());
     }
 }

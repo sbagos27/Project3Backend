@@ -35,36 +35,38 @@ public class PostController {
         return ResponseEntity.ok(posts); // Returns "200 OK"
     }
 
+    // READ posts by User ID
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Posts>> getPostsByUserId(@PathVariable Long userId) {
+        List<Posts> posts = postService.getPostsByAuthorId(userId);
+        return ResponseEntity.ok(posts);
+    }
+
+    // READ posts by Cat ID
+    @GetMapping("/cat/{catId}")
+    public ResponseEntity<List<Posts>> getPostsByCatId(@PathVariable Long catId) {
+        List<Posts> posts = postService.getPostsByCatId(catId);
+        return ResponseEntity.ok(posts);
+    }
+
     // READ one post by ID
     @GetMapping("/{id}")
     public ResponseEntity<Posts> getPostById(@PathVariable long id) {
-        try {
-            Posts post = postService.getPostById(id);
-            return ResponseEntity.ok(post);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Posts post = postService.getPostById(id);
+        return ResponseEntity.ok(post);
     }
 
     // UPDATE a post
     @PutMapping("/{id}")
     public ResponseEntity<Posts> updatePost(@PathVariable long id, @RequestBody Posts postDetails) {
-        try {
-            Posts updatedPost = postService.updatePost(id, postDetails);
-            return ResponseEntity.ok(updatedPost);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Posts updatedPost = postService.updatePost(id, postDetails);
+        return ResponseEntity.ok(updatedPost);
     }
 
     // DELETE a post
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable long id) {
-        try {
-            postService.deletePost(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        postService.deletePost(id);
+        return ResponseEntity.noContent().build();
     }
 }

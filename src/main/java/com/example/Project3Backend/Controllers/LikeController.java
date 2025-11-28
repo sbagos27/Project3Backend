@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
 
@@ -23,9 +24,13 @@ public class LikeController {
 
     // CREATE a like
     @PostMapping
-    public ResponseEntity<Likes> createLike(@RequestBody Likes like) {
-        Likes createdLike = likeService.createLike(like);
-        return new ResponseEntity<>(createdLike, HttpStatus.CREATED);
+    public ResponseEntity<?> createLike(@RequestBody Likes like) {
+        try {
+            Likes createdLike = likeService.createLike(like);
+            return new ResponseEntity<>(createdLike, HttpStatus.CREATED);
+        } catch (DataIntegrityViolationException e) {
+            return new ResponseEntity<>("You have already liked this post", HttpStatus.CONFLICT);
+        }
     }
 
     // READ all likes

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@Controller 
+@Controller
 public class ChatController {
 
     @Autowired
@@ -26,9 +26,9 @@ public class ChatController {
     public void sendMessage(@Payload ChatMessage chatMessage) {
 
         System.out.println("--- MESSAGE RECEIVED ---");
-        System.out.println("Sender: " + chatMessage.getSender());
-        System.out.println("Recipient: " + chatMessage.getRecipient());
-        
+        System.out.println("Sender: " + chatMessage.getSenderId());
+        System.out.println("Recipient: " + chatMessage.getRecipientId());
+
         chatMessage.setCreatedAt(OffsetDateTime.now());
 
         try {
@@ -37,7 +37,7 @@ public class ChatController {
             System.err.println("Failed to save message: " + e.getMessage());
         }
 
-        String recipientDestination = "/queue/private-" + chatMessage.getRecipient();
+        String recipientDestination = "/queue/private-" + chatMessage.getRecipientId();
         messagingTemplate.convertAndSend(recipientDestination, chatMessage);
         System.out.println("Message sent to destination: " + recipientDestination);
     }

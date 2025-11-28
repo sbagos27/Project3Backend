@@ -5,7 +5,7 @@ import com.example.Project3Backend.Repositories.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -14,10 +14,15 @@ public class CommentService {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Autowired
+    private PostService postService;
+
     // CREATE
     public Comments createComment(Comments comment) {
-        comment.setCreatedAt(LocalDateTime.now());
-        return commentRepository.save(comment);
+        comment.setCreatedAt(OffsetDateTime.now());
+        Comments savedComment = commentRepository.save(comment);
+        postService.incrementComments(comment.getPostId());
+        return savedComment;
     }
 
     // READ ALL
@@ -47,5 +52,6 @@ public class CommentService {
     public void deleteComment(Long id) {
         Comments comment = getCommentById(id);
         commentRepository.delete(comment);
+        postService.decrementComments(comment.getPostId());
     }
 }

@@ -4,8 +4,10 @@ import com.example.Project3Backend.Entities.Posts;
 import com.example.Project3Backend.Repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
-import java.time.LocalDateTime; 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -16,20 +18,33 @@ public class PostService {
 
     // CREATE
     public Posts createPost(Posts post) {
-        post.setCreatedAt(LocalDateTime.now());
+        post.setCreatedAt(OffsetDateTime.now());
+        // Initialize counts to 0 if null
+        if (post.getLikesCount() == null)
+            post.setLikesCount(0L);
+        if (post.getCommentCount() == null)
+            post.setCommentCount(0L);
 
         return postRepository.save(post);
     }
 
     // READ ALL
     public List<Posts> getAllPosts() {
-        return postRepository.findAll();
+        return postRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    public List<Posts> getPostsByAuthorId(Long authorId) {
+        return postRepository.findAllByAuthorIdOrderByCreatedAtDesc(authorId);
+    }
+
+    public List<Posts> getPostsByCatId(Long catId) {
+        return postRepository.findAllByCatIdOrderByCreatedAtDesc(catId);
     }
 
     // READ ONE
     public Posts getPostById(long id) {
         return postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post Not Found"));
     }
 
     // UPDATE
@@ -45,7 +60,39 @@ public class PostService {
     // DELETE
     public void deletePost(long id) {
         Posts post = getPostById(id);
-        
         postRepository.delete(post);
+    }
+
+    // Helper methods for counts
+    public void incrementLikes(Long postId) {
+        Posts post = getPostById(postId);
+        if (post.getLikesCount() == null)
+            post.setLikesCount(0L);
+        post.setLikesCount(post.getLikesCount() + 1);
+        postRepository.save(post);
+    }
+
+    public void decrementLikes(Long postId) {
+        Posts post = getPostById(postId);
+        if (post.getLikesCount() != null && post.getLikesCount() > 0) {
+            post.setLikesCount(post.getLikesCount() - 1);
+            postRepository.save(post);
+        }
+    }
+
+    public void incrementComments(Long postId) {
+        Posts post = getPostById(postId);
+        if (post.getCommentCount() == null)
+            post.setCommentCount(0L);
+        post.setCommentCount(post.getCommentCount() + 1);
+        postRepository.save(post);
+    }
+
+    public void decrementComments(Long postId) {
+        Posts post = getPostById(postId);
+        if (post.getCommentCount() != null && post.getCommentCount() > 0) {
+            post.setCommentCount(post.getCommentCount() - 1);
+            postRepository.save(post);
+        }
     }
 }

@@ -1,18 +1,18 @@
 package com.example.Project3Backend.Entities;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
-@Entity 
-@Table(name = "posts") 
+@Entity
+@Table(name = "posts")
 public class Posts {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 
+    private Long id;
 
-    @Column(name = "created_at") 
-    private LocalDateTime createdAt; 
+    @Column(name = "created_at", columnDefinition = "TIMESTAMPTZ")
+    private OffsetDateTime createdAt;
 
     @Column(name = "caption")
     private String caption;
@@ -26,8 +26,11 @@ public class Posts {
     @Column(name = "likes_count")
     private Long likesCount;
 
-    @Column(name = "comment_count") 
+    @Column(name = "comment_count")
     private Long commentCount;
+
+    @Column(name = "cat_id")
+    private Long catId;
 
     // --- Constructors ---
 
@@ -44,11 +47,11 @@ public class Posts {
         this.id = id;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -90,5 +93,13 @@ public class Posts {
 
     public void setCommentCount(Long commentCount) {
         this.commentCount = commentCount;
+    }
+
+    public Long getCatId() {
+        return catId;
+    }
+
+    public void setCatId(Long catId) {
+        this.catId = catId;
     }
 }
