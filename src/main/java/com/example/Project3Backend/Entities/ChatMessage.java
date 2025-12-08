@@ -18,7 +18,7 @@ public class ChatMessage {
     private Long id;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMPTZ")
-    private OffsetDateTime createdAt;
+    private OffsetDateTime timestamp;
 
     // Maps the 'sender' field to the 'sender' column
     @Column(name = "sender_id")
@@ -46,12 +46,12 @@ public class ChatMessage {
         this.id = id;
     }
 
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
+    public OffsetDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setTimestamp(OffsetDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
     public Long getSenderId() {
