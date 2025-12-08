@@ -12,6 +12,10 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import com.example.Project3Backend.Services.AppUserService;
+import java.util.List;
 
 @Controller
 public class ChatController {
@@ -22,6 +26,9 @@ public class ChatController {
     @Autowired
     private MessageRepository messageRepository;
 
+    @Autowired
+    private AppUserService appUserService;
+
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@Payload ChatMessage chatMessage) {
 
@@ -29,7 +36,7 @@ public class ChatController {
         System.out.println("Sender: " + chatMessage.getSenderId());
         System.out.println("Recipient: " + chatMessage.getRecipientId());
 
-        chatMessage.setCreatedAt(OffsetDateTime.now());
+        chatMessage.setTimestamp(OffsetDateTime.now());
 
         try {
             messageRepository.save(chatMessage);
@@ -40,6 +47,15 @@ public class ChatController {
         String recipientDestination = "/queue/private-" + chatMessage.getRecipientId();
         messagingTemplate.convertAndSend(recipientDestination, chatMessage);
         System.out.println("Message sent to destination: " + recipientDestination);
+    }
+
+    @GetMapping("/api/messages/{otherUserId}")
+    @ResponseBody
+    public List<ChatMessage> getChatHistory(@PathVariable Long otherUserId,
+            @RequestHeader("Authorization") String token) {
+        String jwt = token.substring(7); // Remove "Bearer " prefix
+        Long currentUserId = appUserService.getUserIdFromToken(jwt);
+        return messageRepository.findChatHistory(currentUserId, otherUserId);
     }
 
     @GetMapping("/db-check")
