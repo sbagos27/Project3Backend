@@ -76,7 +76,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getEmail(), provider);
         
         // Redirect to frontend with JWT token as query parameter
-        String redirectUrl = "https://project3vercel-d9t7v6ktq-gabethemyers-projects.vercel.app/loginSuccess?token=" + token;
+        String redirectUrl = "http://localhost:8081/loginSuccess?token=" + token;
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
 
         // --- Alternative: Write JSON response instead of redirecting ---
