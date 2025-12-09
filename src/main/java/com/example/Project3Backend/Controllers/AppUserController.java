@@ -87,4 +87,22 @@ public class AppUserController {
         List<AppUser> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        Optional<AppUser> userOpt = userService.findById(id);
+
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(404)
+                    .body(Map.of("error", "User not found"));
+        }
+
+        AppUser user = userOpt.get();
+
+        return ResponseEntity.ok(Map.of(
+                "id", user.getId(),
+                "username", user.getUsername(),
+                "email", user.getEmail()
+        ));
+    }
 }
