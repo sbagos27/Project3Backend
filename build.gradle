@@ -34,10 +34,15 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 	// developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation 'net.coobird:thumbnailator:0.4.20'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+	// Skip tests on Heroku during build (they run before env vars are available)
+	onlyIf {
+		!System.getenv().containsKey('DYNO')
+	}
 }

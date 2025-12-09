@@ -21,11 +21,32 @@ public class PostController {
         return "This is the Post Controller (Instagram-like API)";
     }
 
+    @Autowired
+    private com.example.Project3Backend.Services.ImageService imageService;
+
     // CREATE a post
-    @PostMapping
-    public ResponseEntity<Posts> createPost(@RequestBody Posts post) {
-        Posts createdPost = postService.createPost(post);
-        return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
+    @PostMapping(consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Posts> createPost(
+            @RequestParam("file") org.springframework.web.multipart.MultipartFile file,
+            @RequestParam("caption") String caption,
+            @RequestParam("authorId") Long authorId,
+            @RequestParam("catId") Long catId) {
+        try {
+            String imageUrl = imageService.uploadImage(file);
+
+            Posts post = new Posts();
+            post.setCaption(caption);
+            post.setAuthorId(authorId);
+            post.setCatId(catId);
+            post.setImageUrl(imageUrl);
+            post.setCreatedAt(java.time.OffsetDateTime.now());
+            // likes and comments count are default 0 in entity
+
+            Posts createdPost = postService.createPost(post);
+            return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
+        } catch (java.io.IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // READ all posts
