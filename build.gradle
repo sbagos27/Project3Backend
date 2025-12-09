@@ -46,9 +46,3 @@ tasks.named('test') {
 		!System.getenv().containsKey('DYNO')
 	}
 }
-
-task stage(dependsOn: ['build', 'clean'])
-build.mustRunAfter clean
-
-task stage(dependsOn: ['build', 'clean'])
-build.mustRunAfter clean
