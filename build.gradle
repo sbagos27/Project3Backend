@@ -41,7 +41,14 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	// Skip tests on Heroku during build (they run before env vars are available)
+	onlyIf {
+		!System.getenv().containsKey('DYNO')
+	}
 }
+
+task stage(dependsOn: ['build', 'clean'])
+build.mustRunAfter clean
 
 task stage(dependsOn: ['build', 'clean'])
 build.mustRunAfter clean
