@@ -51,9 +51,9 @@ public class AppUserController {
                 AppUser user = userOpt.get();
                 return ResponseEntity.ok(Map.of(
                         "userId", user.getId(),
-                        "username", user.getUsername(),
-                        "email", user.getEmail() != null ? user.getEmail() : "unknown",
-                        "provider", user.getProvider() != null ? user.getProvider() : "unknown"));
+                        "username", user.getUsername() != null ? user.getUsername() : "",
+                        "email", user.getEmail() != null ? user.getEmail() : "",
+                        "provider", user.getProvider() != null ? user.getProvider() : ""));
             }
         }
 

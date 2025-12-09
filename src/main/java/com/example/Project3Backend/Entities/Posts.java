@@ -1,5 +1,6 @@
 package com.example.Project3Backend.Entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 
@@ -80,7 +81,7 @@ public class Posts {
     }
 
     public Long getLikesCount() {
-        return likesCount;
+        return likesCount != null ? likesCount : 0L;
     }
 
     public void setLikesCount(Long likesCount) {
@@ -88,7 +89,7 @@ public class Posts {
     }
 
     public Long getCommentCount() {
-        return commentCount;
+        return commentCount != null ? commentCount : 0L;
     }
 
     public void setCommentCount(Long commentCount) {

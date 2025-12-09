@@ -32,7 +32,7 @@ public class PostController {
     @GetMapping
     public ResponseEntity<List<Posts>> getAllPosts() {
         List<Posts> posts = postService.getAllPosts();
-        return ResponseEntity.ok(posts); // Returns "200 OK"
+        return ResponseEntity.ok(posts);
     }
 
     // READ posts by User ID
