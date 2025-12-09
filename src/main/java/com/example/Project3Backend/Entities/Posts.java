@@ -25,10 +25,10 @@ public class Posts {
     private String imageUrl;
 
     @Column(name = "likes_count")
-    private Long likesCount;
+    private Long likesCount = 0L;
 
     @Column(name = "comment_count")
-    private Long commentCount;
+    private Long commentCount = 0L;
 
     @Column(name = "cat_id")
     private Long catId;

@@ -19,12 +19,6 @@ public class PostService {
     // CREATE
     public Posts createPost(Posts post) {
         post.setCreatedAt(OffsetDateTime.now());
-        // Initialize counts to 0 if null
-        if (post.getLikesCount() == null)
-            post.setLikesCount(0L);
-        if (post.getCommentCount() == null)
-            post.setCommentCount(0L);
-
         return postRepository.save(post);
     }
 
@@ -66,8 +60,6 @@ public class PostService {
     // Helper methods for counts
     public void incrementLikes(Long postId) {
         Posts post = getPostById(postId);
-        if (post.getLikesCount() == null)
-            post.setLikesCount(0L);
         post.setLikesCount(post.getLikesCount() + 1);
         postRepository.save(post);
     }
@@ -82,8 +74,6 @@ public class PostService {
 
     public void incrementComments(Long postId) {
         Posts post = getPostById(postId);
-        if (post.getCommentCount() == null)
-            post.setCommentCount(0L);
         post.setCommentCount(post.getCommentCount() + 1);
         postRepository.save(post);
     }
