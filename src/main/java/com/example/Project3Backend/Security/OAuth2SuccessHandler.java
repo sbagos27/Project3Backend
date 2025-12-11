@@ -32,7 +32,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
         OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) authentication;
-        
+
+        String client = request.getParameter("client");
+
         // Determine which provider was used
         String provider = oauth2Token.getAuthorizedClientRegistrationId();
         String providerId;
@@ -76,8 +78,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getEmail(), provider);
         
         // Redirect to frontend with JWT token as query parameter
-        String redirectUrl = "http://localhost:8081/loginSuccess?token=" + token;
-        redirectUrl = "myapp://loginSuccess?token=" + token; // THIS IS FOR ANDROID
+        String redirectUrl;
+
+        if ("android".equals(client)) {
+            redirectUrl = "myapp://loginSuccess?token=" + token;
+        } else {
+            redirectUrl = "http://localhost:8081/loginSuccess?token=" + token;
+        }
+        // THIS checks FOR ANDROID or web
 
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
 
