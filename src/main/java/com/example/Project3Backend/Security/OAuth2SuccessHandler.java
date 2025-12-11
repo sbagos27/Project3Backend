@@ -77,6 +77,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         
         // Redirect to frontend with JWT token as query parameter
         String redirectUrl = "http://localhost:8081/loginSuccess?token=" + token;
+        redirectUrl = "myapp://loginSuccess?token=" + token; // THIS IS FOR ANDROID
+
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
 
         // --- Alternative: Write JSON response instead of redirecting ---
