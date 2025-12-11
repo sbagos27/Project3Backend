@@ -19,6 +19,10 @@ public class CatService {
         return catRepository.findAll();
     }
 
+    public List<Cat> getCatsByUserId(Long userId) {
+        return catRepository.findByUserId(userId);
+    }
+
     public Cat getCatById(Long id) {
         return catRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cat not found"));
