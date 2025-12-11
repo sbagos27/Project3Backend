@@ -45,6 +45,7 @@ public class CatController {
             cat.setName(name);
             cat.setUserId(userId);
             cat.setBio(bio);
+            cat.setCreatedAt(java.time.OffsetDateTime.now());
             
             if (birthdate != null && !birthdate.isEmpty()) {
                 cat.setBirthdate(java.time.LocalDate.parse(birthdate));
